@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "cleytonferrari.com";
+}
+
+<script type="text/javascript">
+    function ViewModel() {
+        var self = this;
+        self.embed = ko.observable();
+        self.url = ko.observable();
+
+
+        self.url.subscribe(function (valor) {
+            var embed = self.retornaEmbedDoYoutube(valor);
+            $("#video").html("<embed src='" + embed + "'/>");//Seta via jQuery
+
+            self.embed("<embed src='" + embed + "'/>");//Seta via KO
+        });
+
+        self.retornaEmbedDoYoutube = function (url) {
+            //Todo: melhorar este metodo para aceitar urls do youtube, vimeo, globo
+            var regex = /http\:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})/;
+            var id = url.match(regex)[1];
+            return "http://www.youtube.com/embed/" + id;
+        };
+    }
+
+    var vm = new ViewModel();
+    $(document).ready(function () {
+        ko.applyBindings(vm);
+    });
+</script>
+
+<h1>Exemplo de geração dinâmica de Vídeo</h1>
+
+
+<label>Insira a URL do video do Youtube:</label>
+<input type="text" data-bind="value: url" style="width: 320px" />
+
+<p>Elemento inserido: <em data-bind="text: embed"></em></p>
+<em>Usando jQuery html</em>
+<div id="video">
+    <!-- Container para injetar via jQuery o embed do video -->
+</div>
+
+<em>Usando Ko html</em>
+<!-- ko if(embed) -->
+<div data-bind="html: embed">
+    <!-- Container para injetar via Ko o embed do video -->
+</div>
+<!-- /ko -->
+
